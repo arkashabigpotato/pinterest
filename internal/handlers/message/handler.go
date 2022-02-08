@@ -73,5 +73,23 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request)  {
+	a := models.Message{}
 
+	err := json.NewDecoder(r.Body).Decode(&a)
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	err = h.MessageService.Delete(a.ID)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode("ok")
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
 }

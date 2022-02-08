@@ -17,7 +17,7 @@ func New(router *mux.Router, commentService comment.Service) {
 	handler := &Handler{
 		commentService: commentService,
 	}
-	c := router.PathPrefix("/saved_pins").Subrouter()
+	c := router.PathPrefix("/comment").Subrouter()
 
 	c.HandleFunc("/create", handler.Create).Methods("POST")
 	c.HandleFunc("/get-by-id", handler.GetByID).Methods("POST")
@@ -101,13 +101,13 @@ func (h *Handler) GetByUserID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetByPinID(w http.ResponseWriter, r *http.Request) {
-	userId, ok := mux.Vars(r)["id"]
+	pinId, ok := mux.Vars(r)["id"]
 	if !ok{
 		http.Error(w, " :( ", 400)
 		return
 	}
 
-	id, err := strconv.Atoi(userId)
+	id, err := strconv.Atoi(pinId)
 	if err != nil{
 		http.Error(w, err.Error(), 400)
 		return
@@ -127,5 +127,23 @@ func (h *Handler) GetByPinID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request)  {
+	a := models.Comment{}
 
+	err := json.NewDecoder(r.Body).Decode(&a)
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	err = h.commentService.Delete(a.ID)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode("ok")
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
 }
