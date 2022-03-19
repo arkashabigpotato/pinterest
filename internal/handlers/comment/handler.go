@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
-	"strconv"
 )
 
 type Handler struct {
@@ -49,25 +48,22 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
-	userId, ok := mux.Vars(r)["id"]
-	if !ok{
-		http.Error(w, " :( ", 400)
+	c := models.Comment{}
+
+	err := json.NewDecoder(r.Body).Decode(&c)
+	if err != nil || c.ID == 0 {
+		http.Error(w, "Validation error", http.StatusBadRequest)
 		return
 	}
 
-	id, err := strconv.Atoi(userId)
-	if err != nil{
-		http.Error(w, err.Error(), 400)
-		return
-	}
 
-	s, err := h.commentService.GetByID(id)
+	com, err := h.commentService.GetByID(c.ID)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(s)
+	err = json.NewEncoder(w).Encode(com)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -75,25 +71,22 @@ func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetByUserID(w http.ResponseWriter, r *http.Request) {
-	userId, ok := mux.Vars(r)["id"]
-	if !ok{
-		http.Error(w, " :( ", 400)
+	c := models.Comment{}
+
+	err := json.NewDecoder(r.Body).Decode(&c)
+	if err != nil || c.AuthorID == 0 {
+		http.Error(w, "Validation error", http.StatusBadRequest)
 		return
 	}
 
-	id, err := strconv.Atoi(userId)
-	if err != nil{
-		http.Error(w, err.Error(), 400)
-		return
-	}
 
-	s, err := h.commentService.GetByUserID(id, 10, 10)
+	com, err := h.commentService.GetByUserID(c.AuthorID, 10, 0)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(s)
+	err = json.NewEncoder(w).Encode(com)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -101,25 +94,22 @@ func (h *Handler) GetByUserID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetByPinID(w http.ResponseWriter, r *http.Request) {
-	pinId, ok := mux.Vars(r)["id"]
-	if !ok{
-		http.Error(w, " :( ", 400)
+	c := models.Comment{}
+
+	err := json.NewDecoder(r.Body).Decode(&c)
+	if err != nil || c.PinID == 0 {
+		http.Error(w, "Validation error", http.StatusBadRequest)
 		return
 	}
 
-	id, err := strconv.Atoi(pinId)
-	if err != nil{
-		http.Error(w, err.Error(), 400)
-		return
-	}
 
-	s, err := h.commentService.GetByPinID(id, 10, 10)
+	com, err := h.commentService.GetByPinID(c.PinID, 100, 0)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(s)
+	err = json.NewEncoder(w).Encode(com)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return

@@ -21,7 +21,7 @@ func New(router *mux.Router, usersService users.Service) {
 	u := router.PathPrefix("/users").Subrouter()
 
 	u.HandleFunc("/create", handler.Create).Methods("POST")
-	u.HandleFunc("/get-by-email/{email}", handler.GetByEmail).Methods("GET")
+	u.HandleFunc("/get-by-email", handler.GetByEmail).Methods("POST")
 }
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
@@ -49,19 +49,21 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetByEmail(w http.ResponseWriter, r *http.Request) {
-	email, ok := mux.Vars(r)["email"]
-	if !ok{
-		http.Error(w, " :( ", 400)
+	u := models.User{}
+
+	err := json.NewDecoder(r.Body).Decode(&u)
+	if err != nil || u.Email == "" {
+		http.Error(w, "Validation error", 400)
 		return
 	}
 
-	u, err := h.usersService.GetByEmail(email)
+	user, err := h.usersService.GetByEmail(u.Email)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(u)
+	err = json.NewEncoder(w).Encode(user)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return

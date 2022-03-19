@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
-	"strconv"
 )
 
 type Handler struct {
@@ -49,25 +48,21 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetByUserID(w http.ResponseWriter, r *http.Request) {
-	userId, ok := mux.Vars(r)["id"]
-	if !ok{
-		http.Error(w, " :( ", 400)
+	p := models.Pin{}
+
+	err := json.NewDecoder(r.Body).Decode(&p)
+	if err != nil || p.AuthorID == 0 {
+		http.Error(w, "Validation error", http.StatusBadRequest)
 		return
 	}
 
-	id, err := strconv.Atoi(userId)
-	if err != nil{
-		http.Error(w, err.Error(), 400)
-		return
-	}
-
-	s, err := h.PinService.GetByUserID(id, 10, 10)
+	pn, err := h.PinService.GetByUserID(p.AuthorID, 10, 0)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(s)
+	err = json.NewEncoder(w).Encode(pn)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -75,25 +70,22 @@ func (h *Handler) GetByUserID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
-	Id, ok := mux.Vars(r)["id"]
-	if !ok{
-		http.Error(w, " :( ", 400)
+	p := models.Pin{}
+
+	err := json.NewDecoder(r.Body).Decode(&p)
+	if err != nil || p.ID == 0 {
+		http.Error(w, "Validation error", http.StatusBadRequest)
 		return
 	}
 
-	id, err := strconv.Atoi(Id)
-	if err != nil{
-		http.Error(w, err.Error(), 400)
-		return
-	}
 
-	s, err := h.PinService.GetByUserID(id, 10, 10)
+	pn, err := h.PinService.GetByUserID(p.ID, 10, 0)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(s)
+	err = json.NewEncoder(w).Encode(pn)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -102,25 +94,14 @@ func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
 
 
 func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
-	Id, ok := mux.Vars(r)["id"]
-	if !ok{
-		http.Error(w, " :( ", 400)
-		return
-	}
 
-	id, err := strconv.Atoi(Id)
-	if err != nil{
-		http.Error(w, err.Error(), 400)
-		return
-	}
-
-	s, err := h.PinService.GetAll(id, 10)
+	pn, err := h.PinService.GetAll(10, 0)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(s)
+	err = json.NewEncoder(w).Encode(pn)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return

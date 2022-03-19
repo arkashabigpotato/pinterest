@@ -33,7 +33,7 @@ func (sr *repository) GetByUserID(userID, limit, offset int) ([]*models.SavedPin
 	var savedPins []*models.SavedPin
 
 	rows, err := sr.db.Query(`select user_id, pin_id from saved_pins 
-where user_id = $1 or pin_id = $2 limit $3 offset $4`, userID, limit, offset)
+where user_id = $1  limit $2 offset $3`, userID, limit, offset)
 	if err != nil {
 		return nil, err
 	}

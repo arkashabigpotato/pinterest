@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
-	"strconv"
 )
 
 type Handler struct {
@@ -47,19 +46,15 @@ func (h *Handler) Append(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetByUserID(w http.ResponseWriter, r *http.Request) {
-	userId, ok := mux.Vars(r)["id"]
-	if !ok{
-		http.Error(w, " :( ", 400)
+	sp := models.SavedPin{}
+
+	err := json.NewDecoder(r.Body).Decode(&sp)
+	if err != nil || sp.UserID == 0 {
+		http.Error(w, "Validation error", http.StatusBadRequest)
 		return
 	}
 
-	id, err := strconv.Atoi(userId)
-	if err != nil{
-		http.Error(w, err.Error(), 400)
-		return
-	}
-
-	s, err := h.savedPinService.GetByUserID(id, 10, 10)
+	s, err := h.savedPinService.GetByUserID(sp.UserID, 10, 0)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return

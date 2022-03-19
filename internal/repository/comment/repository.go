@@ -65,7 +65,7 @@ where author_id = $1 limit $2 offset $3`, userID, limit, offset)
 func (cr *repository) GetByPinID(pinID, limit, offset int) ([]*models.Comment, error) {
 	var comments []*models.Comment
 
-	rows, err := cr.db.Query(`select id,  is_deleted, pin_id, text, author_id, date_time 
+	rows, err := cr.db.Query(`select id,  is_deleted, pin_id,  text, author_id, date_time 
 from comment where pin_id = $1 limit $2 offset $3`, pinID, limit, offset)
 	if err != nil{
 		return nil, err
@@ -82,8 +82,8 @@ from comment where pin_id = $1 limit $2 offset $3`, pinID, limit, offset)
 	return comments, nil
 }
 
-func (cr *repository) Delete(id int) error {
-	_, err := cr.db.Exec(`delete from comment where id = $1`, id)
+func (cr *repository) Delete(commentID int) error {
+	_, err := cr.db.Exec(`delete from comment where id = $1`, commentID)
 	if err != nil {
 		return err
 	}

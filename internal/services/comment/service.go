@@ -27,8 +27,8 @@ func (s *service) Create(comment models.Comment) error{
 	return s.commentRepo.Create(comment)
 }
 
-func (s *service) GetByID(pinID int) (*models.Comment, error){
-	return s.commentRepo.GetByID(pinID)
+func (s *service) GetByID(commentID int) (*models.Comment, error){
+	return s.commentRepo.GetByID(commentID)
 }
 
 func (s *service) GetByUserID(userID, limit, offset int) ([]*models.Comment, error){
@@ -39,6 +39,6 @@ func (s *service) GetByPinID(pinID, limit, offset int) ([]*models.Comment, error
 	return s.commentRepo.GetByUserID(pinID, limit, offset)
 }
 
-func (s *service) Delete(pinID int) error {
-	return s.commentRepo.Delete(pinID)
+func (s *service) Delete(commentID int) error {
+	return s.commentRepo.Delete(commentID)
 }
