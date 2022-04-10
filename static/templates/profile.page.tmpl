@@ -1,0 +1,60 @@
+{{ template "base" .}}
+{{define "main"}}
+<main id="main">
+
+    <section class="section pb-5">
+        <div class="container">
+            <div class="row mb-5 align-items-end">
+                <div class="col-md-6" data-aos="fade-up">
+
+                    <h2>Profile</h2>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 ml-auto order-2" data-aos="fade-up">
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <div class="d-flex mb-1">
+                                <strong>{{ $username }}}</strong>
+                            </div>
+                        </li>
+                        <li class="mb-3">
+                            <div class="d-flex mb-1">
+                                <strong>{{ $birth_date }}</strong>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-7 mb-5 mb-md-0" data-aos="fade-up">
+                    <p><img src="{{ $image }}" alt="Image" class="img-fluid"></p>
+                    <p>{{ $status }}</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ======= Works Section ======= -->
+    <section class="section site-portfolio">
+        <div id="portfolio-grid" class="row no-gutter" data-aos="fade-up" data-aos-delay="200">
+            {{ range $pin := .pins }}
+            <div class="item web col-sm-6 col-md-4 col-lg-4 mb-4">
+                <a href="{{ $pin.url }}" class="item-wrap fancybox">
+                    <div class="work-info">
+                        <h3>{{ $pin.name }}</h3>
+                        <span>Web</span>
+                    </div>
+                    <img class="img-fluid" src="{{ $pin.img }}">
+                </a>
+            </div>
+            {{ end }}
+        </div>
+    </section><!-- End  Works Section -->
+
+</main><!-- End #main -->
+{{ end }}

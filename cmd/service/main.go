@@ -6,6 +6,7 @@ import (
 	pin3 "Project1/internal/handlers/pin"
 	saved_pins3 "Project1/internal/handlers/saved_pins"
 	users3 "Project1/internal/handlers/users"
+	"Project1/internal/handlers/web"
 	"Project1/internal/repository/comment"
 	"Project1/internal/repository/message"
 	"Project1/internal/repository/pin"
@@ -17,6 +18,7 @@ import (
 	saved_pins2 "Project1/internal/services/saved_pins"
 	users2 "Project1/internal/services/users"
 	db2 "Project1/pkg/db"
+	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
 )
@@ -44,5 +46,11 @@ func main() {
 	commentService := comment2.NewService(commentRepo)
 	comment3.New(router, commentService)
 
-	http.ListenAndServe(":145", router)
+	web.New(router, pinService)
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+
+	err := http.ListenAndServe(":145", router)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
