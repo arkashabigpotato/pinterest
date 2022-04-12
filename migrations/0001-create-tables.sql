@@ -4,7 +4,9 @@ create table if not exists users (
     password text not null,
     is_admin boolean not null,
     birth_date text not null,
-    username text not null
+    username text not null,
+    profile_img text not null,
+    status text not null
 );
 
 create table if not exists message(

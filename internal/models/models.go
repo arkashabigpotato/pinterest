@@ -1,12 +1,14 @@
 package models
 
 type User struct {
-	ID 		  int        `json:"id"`
-	Email 	  string     `json:"email"`
-	Password  string     `json:"password"`
-	IsAdmin   bool       `json:"is_admin"`
-	BirthDate string     `json:"birth_date"`
-	Username  string     `json:"user_name"`
+	ID 		   int        `json:"id"`
+	Email 	   string     `json:"email"`
+	Password   string     `json:"password"`
+	IsAdmin    bool       `json:"is_admin"`
+	BirthDate  string     `json:"birth_date"`
+	Username   string     `json:"user_name"`
+	ProfileImg string     `json:"profile_img"`
+	Status     string     `json:"status"`
 }
 
 type Message struct {

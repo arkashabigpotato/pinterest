@@ -1,0 +1,43 @@
+{{ template "base" .}}
+{{define "main"}}
+<main id="main">
+
+    <section class="section pb-5">
+      <div class="container">
+
+        <div class="row mb-5 align-items-end">
+          <div class="col-md-6" data-aos="fade-up">
+            <h2>Sign In / <a href="/sign-up">Sign Up</a></h2>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-5 mb-md-0" data-aos="fade-up">
+
+            <form action="sign-in" method="post" role="form" class="php-email-form">
+
+              <div class="row gy-3">
+                <div class="col-md-6 form-group">
+                  <label for="email">Email</label>
+                  <input type="email" class="form-control" name="email" id="email" required>
+                </div>
+                <div class="col-md-6 form-group">
+                  <label for="password">Password</label>
+                  <input type="password" class="form-control" name="password" id="password" required>
+                </div>
+                    <br>
+                    <br>
+                <div class="col-md-6 mt-0 form-group">
+                  <input type="submit" class="readmore d-block w-100" value="Sign In">
+                </div>
+                    <br>
+                    <br>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main><!-- End #main -->
+{{ end }}

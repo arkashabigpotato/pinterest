@@ -8,6 +8,7 @@ import (
 type Service interface {
 	Create(user models.User) error
 	GetByEmail(email string) (*models.User, error)
+	GetByID(userID int) (*models.User, error)
 }
 
 type service struct {
@@ -26,4 +27,8 @@ func (s *service) Create(user models.User) error{
 
 func (s *service) GetByEmail(email string) (*models.User, error){
 	return s.usersRepo.GetByEmail(email)
+}
+
+func (s *service) GetByID(userID int) (*models.User, error){
+	return s.usersRepo.GetByID(userID)
 }

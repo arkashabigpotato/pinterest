@@ -46,7 +46,7 @@ func main() {
 	commentService := comment2.NewService(commentRepo)
 	comment3.New(router, commentService)
 
-	web.New(router, pinService)
+	web.New(router, pinService, userService)
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
 	err := http.ListenAndServe(":145", router)
