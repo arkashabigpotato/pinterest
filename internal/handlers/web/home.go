@@ -128,6 +128,24 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 
+	if r.Method == http.MethodPost {
+
+		email := r.FormValue("email")
+		password := r.FormValue("password")
+
+		user, err := h.UserService.GetByEmail(email)
+		if err != nil{
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if password == user.Password {
+			http.Redirect(w,r,"/", http.StatusFound)
+		}
+		http.Error(w, "bad password", http.StatusBadRequest)
+		return
+
+	}
+
 	files := []string{
 		"./static/templates/sign-in.page.tmpl",
 		"./static/templates/base.layout.tmpl",

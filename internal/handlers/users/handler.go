@@ -4,7 +4,6 @@ import (
 	"Project1/internal/models"
 	"Project1/internal/services/users"
 	"encoding/json"
-	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
 )
@@ -33,7 +32,6 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(b)
 
 	err = h.usersService.Create(b)
 	if err != nil {
