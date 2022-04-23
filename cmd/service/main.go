@@ -49,7 +49,8 @@ func main() {
 	web.New(router, pinService, userService)
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
-	err := http.ListenAndServe(":145", router)
+	fmt.Println("Server started on http://localhost:8888/")
+	err := http.ListenAndServe(":8888", router)
 	if err != nil {
 		fmt.Println(err)
 	}
