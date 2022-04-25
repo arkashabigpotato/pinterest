@@ -46,7 +46,7 @@ func main() {
 	commentService := comment2.NewService(commentRepo)
 	comment3.New(router, commentService)
 
-	web.New(router, pinService, userService)
+	web.New(router, pinService, userService, savedPinService)
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
 	fmt.Println("Server started on http://localhost:8888/")

@@ -3,6 +3,7 @@ package web
 import (
 	"Project1/internal/models"
 	"Project1/internal/services/pin"
+	"Project1/internal/services/saved_pins"
 	"Project1/internal/services/users"
 	"Project1/pkg/template"
 	"context"
@@ -14,14 +15,16 @@ import (
 )
 
 type Handler struct {
-	PinService   pin.Service
-	UserService  users.Service
+	PinService   		pin.Service
+	UserService  		users.Service
+	SavedPinsService    saved_pins.Service
 }
 
-func New(router *mux.Router, PinService pin.Service, UserService  users.Service) {
+func New(router *mux.Router, PinService pin.Service, UserService  users.Service, SavedPinsService saved_pins.Service) {
 	handler := &Handler{
 		PinService: PinService,
 		UserService:  UserService,
+		SavedPinsService: SavedPinsService,
 	}
 
 	router.HandleFunc("/", handler.Index)
@@ -29,6 +32,8 @@ func New(router *mux.Router, PinService pin.Service, UserService  users.Service)
 	router.HandleFunc("/create", handler.Create).Methods(http.MethodPost, http.MethodGet)
 	router.HandleFunc("/sign-up", handler.SignUp).Methods(http.MethodPost, http.MethodGet)
 	router.HandleFunc("/sign-in", handler.SignIn).Methods(http.MethodPost, http.MethodGet)
+	router.HandleFunc("/logout", handler.Logout)
+	router.HandleFunc("/saved-pins", handler.SavedPins)
 }
 
 func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
@@ -59,18 +64,29 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) Profile(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 
-	files := []string{
-		"./static/templates/profile.page.tmpl",
-		"./static/templates/base.layout.tmpl",
+	cookie, err := r.Cookie("id")
+	if err != nil {
+		http.Redirect(w, r, "/sign-in", http.StatusFound)
+		return
 	}
-
-	user, err := h.UserService.GetByID(1)
+	id, err := strconv.Atoi(cookie.Value)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	pins, err := h.PinService.GetByUserID(1, 100, 0)
+	files := []string{
+		"./static/templates/profile.page.tmpl",
+		"./static/templates/base.layout.tmpl",
+	}
+
+	user, err := h.UserService.GetByID(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	pins, err := h.PinService.GetByUserID(id, 100, 0)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -101,12 +117,18 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 			ProfileImg: "static/img/5.jpg",
 			Status:     "qwertyuiop asdfghjkl zxcvbnm",
 		}
-		err := h.UserService.Create(user)
+		id, err := h.UserService.Create(user)
 		if err != nil{
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		http.SetCookie(w, &http.Cookie{
+			Name:       "id",
+			Value:      strconv.Itoa(id),
+			Expires:    time.Now().Add(24 * time.Hour),
+		})
 		http.Redirect(w,r,"/", http.StatusFound)
+		return
 	}
 
 	files := []string{
@@ -199,6 +221,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		http.Redirect(w,r,"/", http.StatusFound)
+		return
 	}
 
 	files := []string{
@@ -211,4 +234,56 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:       "id",
+		Expires:    time.Now().Add(-1 * time.Hour),
+	})
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+func (h *Handler) SavedPins(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Background()
+
+	cookie, err := r.Cookie("id")
+	if err != nil {
+		http.Redirect(w, r, "/sign-in", http.StatusFound)
+		return
+	}
+	id, err := strconv.Atoi(cookie.Value)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	savedPins, err := h.SavedPinsService.GetByUserID(id, 100, 0)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	var pins []*models.Pin
+	for _, savedPin := range savedPins{
+		p, err := h.PinService.GetByID(savedPin.PinID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		pins = append(pins, p)
+	}
+	data := map[string]interface{}{
+		"pins": pins,
+	}
+
+	files := []string{
+		"./static/templates/saved-pins.page.tmpl",
+		"./static/templates/base.layout.tmpl",
+	}
+
+	err = template.ExecuteTemplate(ctx, w, files, data)
+	if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 }

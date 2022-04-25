@@ -6,7 +6,7 @@ import (
 )
 
 type Repository interface {
-	Create(user models.User) error
+	Create(user models.User) (int, error)
 	GetByEmail(email string) (*models.User, error)
 	GetByID(userID int) (*models.User, error)
 }
@@ -21,13 +21,17 @@ func NewUserRepository(db *sql.DB) Repository {
 	}
 }
 
-func (ur *UserRepository) Create(user models.User) error{
-	_, err := ur.db.Exec(`insert into users(email, password, is_admin, birth_date, username, profile_img, status) 
-values ($1, $2, $3, $4, $5, $6, $7)`,
+func (ur *UserRepository) Create(user models.User) (int, error){
+	id := 0
+	err := ur.db.QueryRow(`insert into users(email, password, is_admin, birth_date, username, profile_img, status) 
+values ($1, $2, $3, $4, $5, $6, $7) returning id`,
 		user.Email, user.Password, user.IsAdmin, user.BirthDate, user.Username, user.ProfileImg, user.Status,
-		)
+		).Scan(&id)
+	if err != nil {
+		return 0, err
+	}
 
-	return err
+	return id, nil
 }
 
 func (ur *UserRepository) GetByEmail(email string) (*models.User, error) {

@@ -6,7 +6,7 @@ import (
 )
 
 type Service interface {
-	Create(user models.User) error
+	Create(user models.User) (int, error)
 	GetByEmail(email string) (*models.User, error)
 	GetByID(userID int) (*models.User, error)
 }
@@ -21,7 +21,7 @@ func NewService(usersRepo users.Repository) Service{
 	}
 }
 
-func (s *service) Create(user models.User) error{
+func (s *service) Create(user models.User) (int, error){
 	return s.usersRepo.Create(user)
 }
 

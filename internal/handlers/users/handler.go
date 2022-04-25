@@ -21,6 +21,7 @@ func New(router *mux.Router, usersService users.Service) {
 
 	u.HandleFunc("/create", handler.Create).Methods("POST")
 	u.HandleFunc("/get-by-email", handler.GetByEmail).Methods("POST")
+	u.HandleFunc("/get-by-id", handler.GetByID).Methods("POST")
 }
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
@@ -32,8 +33,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
-	err = h.usersService.Create(b)
+	_, err = h.usersService.Create(b)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -62,6 +62,29 @@ func (h *Handler) GetByEmail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = json.NewEncoder(w).Encode(user)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+}
+
+func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
+	u := models.User{}
+
+	err := json.NewDecoder(r.Body).Decode(&u)
+	if err != nil || u.ID == 0 {
+		http.Error(w, "Validation error", http.StatusBadRequest)
+		return
+	}
+
+
+	us, err := h.usersService.GetByID(u.ID)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(us)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
