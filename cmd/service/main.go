@@ -18,6 +18,7 @@ import (
 	saved_pins2 "Project1/internal/services/saved_pins"
 	users2 "Project1/internal/services/users"
 	db2 "Project1/pkg/db"
+	"Project1/pkg/middleware"
 	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -48,6 +49,10 @@ func main() {
 
 	web.New(router, pinService, userService, savedPinService)
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+
+	// router.Use(middleware.LoggingMW)
+	router.Use(middleware.ContextDataMW)
+	router.Use(middleware.LoggingMW)
 
 	fmt.Println("Server started on http://localhost:8888/")
 	err := http.ListenAndServe(":8888", router)

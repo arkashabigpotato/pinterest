@@ -5,6 +5,7 @@ import (
 	"Project1/internal/services/pin"
 	"Project1/internal/services/saved_pins"
 	"Project1/internal/services/users"
+	"Project1/pkg/ctx_data"
 	"Project1/pkg/template"
 	"context"
 	"github.com/gorilla/mux"
@@ -37,7 +38,13 @@ func New(router *mux.Router, PinService pin.Service, UserService  users.Service,
 }
 
 func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := r.Context()
+	userData := ctx_data.FromContext(ctx)
+
+	isLoggedIn := true
+	if userData.UserID == 0 {
+		isLoggedIn = false
+	}
 
 	files := []string{
 		"./static/templates/index.page.tmpl",
@@ -52,6 +59,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 
 	data := map[string]interface{}{
 		"pins": pins,
+		"isLoggedIn": isLoggedIn,
 	}
 
 	err = template.ExecuteTemplate(ctx, w, files, data)
@@ -62,16 +70,11 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Profile(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := r.Context()
+	userData := ctx_data.FromContext(ctx)
 
-	cookie, err := r.Cookie("id")
-	if err != nil {
+	if userData.UserID == 0 {
 		http.Redirect(w, r, "/sign-in", http.StatusFound)
-		return
-	}
-	id, err := strconv.Atoi(cookie.Value)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -80,13 +83,13 @@ func (h *Handler) Profile(w http.ResponseWriter, r *http.Request) {
 		"./static/templates/base.layout.tmpl",
 	}
 
-	user, err := h.UserService.GetByID(id)
+	user, err := h.UserService.GetByID(userData.UserID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	pins, err := h.PinService.GetByUserID(id, 100, 0)
+	pins, err := h.PinService.GetByUserID(userData.UserID, 100, 0)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -95,9 +98,10 @@ func (h *Handler) Profile(w http.ResponseWriter, r *http.Request) {
 	data := map[string]interface{}{
 		"pins": pins,
 		"user": user,
+		"isLoggedIn": true,
 	}
 
-	err = template.ExecuteTemplate(ctx, w, files, data)
+	err = template.ExecuteTemplate(r.Context(), w, files, data)
 	if err != nil{
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -106,7 +110,13 @@ func (h *Handler) Profile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := r.Context()
+	userData := ctx_data.FromContext(ctx)
+
+	if userData.UserID != 0 {
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
 
 	if r.Method == http.MethodPost {
 		user := models.User{
@@ -136,7 +146,7 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 		"./static/templates/base.layout.tmpl",
 	}
 
-	err := template.ExecuteTemplate(ctx, w, files, map[string]interface{}{})
+	err := template.ExecuteTemplate(ctx, w, files, map[string]interface{}{"isLoggedIn": false})
 	if err != nil{
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -144,7 +154,13 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := r.Context()
+	userData := ctx_data.FromContext(ctx)
+
+	if userData.UserID != 0 {
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
 
 	if r.Method == http.MethodPost {
 		email := r.FormValue("email")
@@ -174,7 +190,7 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 		"./static/templates/base.layout.tmpl",
 	}
 
-	err := template.ExecuteTemplate(ctx, w, files, map[string]interface{}{})
+	err := template.ExecuteTemplate(ctx, w, files, map[string]interface{}{"isLoggedIn": false})
 	if err != nil{
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -182,7 +198,13 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := r.Context()
+	userData := ctx_data.FromContext(ctx)
+
+	if userData.UserID != 0 {
+		http.Redirect(w, r, "/sign-in", http.StatusFound)
+		return
+	}
 
 	if r.Method == http.MethodPost {
 		file, _, err := r.FormFile("img")
@@ -229,7 +251,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		"./static/templates/base.layout.tmpl",
 	}
 
-	err := template.ExecuteTemplate(ctx, w, files, map[string]interface{}{})
+	err := template.ExecuteTemplate(ctx, w, files, map[string]interface{}{"isLoggedIn": true})
 	if err != nil{
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -241,11 +263,17 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 		Name:       "id",
 		Expires:    time.Now().Add(-1 * time.Hour),
 	})
-	http.Redirect(w, r, "/", http.StatusFound)
+	http.Redirect(w, r.WithContext(context.Background()), "/", http.StatusFound)
 }
 
 func (h *Handler) SavedPins(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := r.Context()
+	userData := ctx_data.FromContext(ctx)
+
+	if userData.UserID == 0 {
+		http.Redirect(w, r, "/sign-in", http.StatusFound)
+		return
+	}
 
 	cookie, err := r.Cookie("id")
 	if err != nil {
@@ -273,6 +301,7 @@ func (h *Handler) SavedPins(w http.ResponseWriter, r *http.Request) {
 	}
 	data := map[string]interface{}{
 		"pins": pins,
+		"isLoggedIn": true,
 	}
 
 	files := []string{

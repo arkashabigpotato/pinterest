@@ -6,7 +6,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>MyPortfolio Bootstrap Template - About</title>
+  <title>Pin Storage</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -25,13 +25,6 @@
 
   <!-- Template Main CSS File -->
   <link href="static/templates/assets/css/style.css" rel="stylesheet">
-
-  <!-- =======================================================
-  * Template Name: MyPortfolio - v4.7.0
-  * Template URL: https://bootstrapmade.com/myportfolio-bootstrap-portfolio-website-template/
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
 </head>
 
 <body>
@@ -41,13 +34,17 @@
     <div class="container py-2 py-md-5">
       <div class="row align-items-start">
         <div class="col-md-2">
-            <ul class="custom-menu" style="display:flex; gap:120px;">
+          <ul class="custom-menu" style="display:flex; gap:120px;">
             <li class="active"><a href="/">Home</a></li>
-            <li><a href="/profile">Profile</a></li>
-            <li><a href="/create">Create</a></li>
-            <li><a href="/logout">Logout</a></li>
-            <li><a href="/messages">Messages</a></li>
-            <li><a href="/sign-in">Sign In</a></li>
+            {{ if .isLoggedIn }}
+                <li><a href="/create">Create</a></li>
+                <li><a href="/messages">Messages</a></li>
+                <li><a href="/profile">My Profile</a></li>
+                <li><a href="/logout">Logout</a></li>
+            {{ else }}
+                <li><a href="/sign-in">Sign In</a></li>
+                <li><a href="/sign-up">Sign Up</a></li>
+            {{ end }}
           </ul>
         </div>
       </div>
@@ -57,7 +54,7 @@
 
   <nav class="navbar navbar-light custom-navbar">
     <div class="container">
-      <a class="navbar-brand" href="index.page.tmpl">MyPortfolio.</a>
+      <a class="navbar-brand" href="/">PinStorage</a>
       <a href="#" class="burger" data-bs-toggle="collapse" data-bs-target="#main-navbar">
         <span></span>
       </a>
