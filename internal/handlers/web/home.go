@@ -202,12 +202,13 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	userData := ctx_data.FromContext(ctx)
 
-	if userData.UserID != 0 {
+	if userData.UserID == 0 {
 		http.Redirect(w, r, "/sign-in", http.StatusFound)
 		return
 	}
 
 	if r.Method == http.MethodPost {
+		description := r.FormValue("description")
 		file, _, err := r.FormFile("img")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -235,8 +236,8 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		}
 
 		err = h.PinService.Create(models.Pin{
-			Description:   "wadawdaw",
-			AuthorID:      1,
+			Description:   description,
+			AuthorID:      userData.UserID,
 			PinLink:       temp.Name(),
 		})
 		if err != nil {

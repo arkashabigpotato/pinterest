@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"Project1/pkg/ctx_data"
-	"context"
 	"log"
 	"net/http"
 	"strconv"
@@ -19,7 +18,7 @@ func LoggingMW(next http.Handler) http.Handler {
 
 func ContextDataMW(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.Background()
+		ctx := r.Context()
 
 		cookie, err := r.Cookie("id")
 		if err != nil && err == http.ErrNoCookie {
