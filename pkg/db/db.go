@@ -9,7 +9,7 @@ import (
 
 // PostgresConnection create connect to postgres and check it
 func PostgresConnection() *sql.DB {
-	dsn := fmt.Sprintf("host=localhost port=5432 dbname=postgres user=agboriskin")
+	dsn := fmt.Sprintf("host=localhost port=5432 dbname=postgres user=annyka")
 
 	db, err := sql.Open("pgx", dsn)
 	if err != nil {

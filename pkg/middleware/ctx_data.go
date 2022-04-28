@@ -24,7 +24,7 @@ func ContextDataMW(next http.Handler) http.Handler {
 		cookie, err := r.Cookie("id")
 		if err != nil && err == http.ErrNoCookie {
 			ctx = ctx_data.ToContext(ctx, ctx_data.UserData{UserID: 0})
-			next.ServeHTTP(w, r.WithContext(ctx))
+			next.ServeHTTP(w, r.Clone(ctx).WithContext(ctx))
 			return
 		}
 		if err != nil && err != http.ErrNoCookie{
@@ -38,6 +38,6 @@ func ContextDataMW(next http.Handler) http.Handler {
 		}
 
 		ctx = ctx_data.ToContext(ctx, ctx_data.UserData{UserID: id})
-		next.ServeHTTP(w, r.WithContext(ctx))
+		next.ServeHTTP(w, r.Clone(ctx).WithContext(ctx))
 	})
 }

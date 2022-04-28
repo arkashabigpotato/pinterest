@@ -35,6 +35,7 @@ func New(router *mux.Router, PinService pin.Service, UserService  users.Service,
 	router.HandleFunc("/sign-in", handler.SignIn).Methods(http.MethodPost, http.MethodGet)
 	router.HandleFunc("/logout", handler.Logout)
 	router.HandleFunc("/saved-pins", handler.SavedPins)
+	router.HandleFunc("/pin/{id}", handler.PinPage).Methods(http.MethodPost, http.MethodGet)
 }
 
 func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
@@ -275,17 +276,7 @@ func (h *Handler) SavedPins(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie, err := r.Cookie("id")
-	if err != nil {
-		http.Redirect(w, r, "/sign-in", http.StatusFound)
-		return
-	}
-	id, err := strconv.Atoi(cookie.Value)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	savedPins, err := h.SavedPinsService.GetByUserID(id, 100, 0)
+	savedPins, err := h.SavedPinsService.GetByUserID(userData.UserID, 100, 0)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -315,4 +306,38 @@ func (h *Handler) SavedPins(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+}
+
+func (h *Handler) PinPage(w http.ResponseWriter, r *http.Request) {
+	// ctx := r.Context()
+	// userData := ctx_data.FromContext(ctx)
+	vars := mux.Vars(r)
+
+	pinID, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	files := []string{
+		"./static/templates/pin-page.page.tmpl",
+		"./static/templates/base.layout.tmpl",
+	}
+
+	p, err := h.PinService.GetByID(pinID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := map[string]interface{}{
+		"pin": p,
+		"isLoggedIn": true,
+	}
+
+	err = template.ExecuteTemplate(r.Context(), w, files, data)
+	if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

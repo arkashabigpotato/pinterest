@@ -14,5 +14,8 @@ func ToContext(ctx context.Context, data UserData) context.Context {
 }
 
 func FromContext(ctx context.Context) UserData {
+	if ctx.Value(key) == nil{
+		return UserData{UserID: 0}
+	}
 	return ctx.Value(key).(UserData)
 }

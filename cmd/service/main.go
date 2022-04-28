@@ -52,7 +52,7 @@ func main() {
 
 	// router.Use(middleware.LoggingMW)
 	router.Use(middleware.ContextDataMW)
-	router.Use(middleware.LoggingMW)
+	// router.Use(middleware.LoggingMW)
 
 	fmt.Println("Server started on http://localhost:8888/")
 	err := http.ListenAndServe(":8888", router)
