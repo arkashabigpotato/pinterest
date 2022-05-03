@@ -4,19 +4,16 @@
 
     <section class="section pb-5">
         <div class="container">
-            <div class="row mb-5 align-items-end">
+            <div class="row mb-5">
                 <div class="col-md-6" data-aos="fade-up">
                     {{$pin := .pin}}
                     <h2> {{$pin.Description}} </h2>
                 </div>
-
             </div>
-            <div class="row justify-content-md-center">
-
-                <div class="col-md-9 mb-7 mb-md-0" data-aos="fade-up">
-                    <p><img src="{{ $pin.PinLink }}" alt="Image" class="img-fluid"></p>
+            <div class="row">
+                <div class="col-md-9 mb-7 mb-md-3" data-aos="fade-up">
+                    <p><img src="/{{ $pin.PinLink }}" alt="Image" class="img-fluid"></p>
                 </div>
-
             </div>
 
         <div class="row">
@@ -36,6 +33,49 @@
         </div>
 
     </section>
+          <div class="container">
+            <div class="row">
+              <div class="col-md-7 mb-6 mb-md-0" data-aos="fade-up">
+
+                <form  action="" method="post" role="form">
+
+                  <div class="row">
+                    <div class="col-md-12 form-group">
+                        <label for="name">Message</label>
+                        <textarea class="form-control" name="message" cols="30" rows="10" required></textarea>
+                    </div>
+                    <div class="col-md-12 my-2"></div>
+                    <div class="col-md-6 mt-0 form-group">
+                      <input type="submit" class="readmore d-block w-100" value="Send Message">
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+            <div class="col-md-12 my-5"></div>
+                  <div class="container">
+                    <div class="row">
+                      <div class="col-md-7 mb-6 mb-md-0" data-aos="fade-up">
+
+                        <form role="form">
+
+                          <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label for="name">Artem</label>
+                                <textarea class="form-control"  name="message" cols="30" rows="10" readonly>Text sample</textarea>
+                            </div>
+                            <div class="col-md-12 my-3"></div>
+                            <div class="col-md-12 form-group">
+                                <label for="name">Artem 2</label>
+                                <textarea class="form-control" name="message" cols="30" rows="10" readonly>Text sample 2</textarea>
+                            </div>
+                            <div class="col-md-12 my-3"></div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
 
 </main><!-- End #main -->
 {{ end }}
