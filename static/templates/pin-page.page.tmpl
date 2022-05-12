@@ -18,15 +18,15 @@
 
         <div class="row">
                  <div class="col-4" data-aos="fade-up">
-                       <a href="/saved-pins"><input type="submit" class="readmore d-block w-100" value="Save"></a>
+                       <a href="/save/{{ $pin.ID }}"><input type="submit" class="readmore d-block w-100" value="Save"></a>
                  </div>
 
                  <div class="col-4" data-aos="fade-up">
-                       <a href="/saved-pins"><input type="submit" class="readmore d-block w-100" value="Like"></a>
+                       <a href="/like/{{ $pin.ID }}"><input type="submit" class="readmore d-block w-100" value="Like - {{ $pin.LikesCount }}"></a>
                  </div>
 
                  <div class="col-4" data-aos="fade-up">
-                       <a href="/saved-pins"><input type="submit" class="readmore d-block w-100" value="Dislike"></a>
+                       <a href="/dislike/{{ $pin.ID }}"><input type="submit" class="readmore d-block w-100" value="Dislike - {{ $pin.DislikesCount }}"></a>
                  </div>
         </div>
 
@@ -46,7 +46,7 @@
                     </div>
                     <div class="col-md-12 my-2"></div>
                     <div class="col-md-6 mt-0 form-group">
-                      <input type="submit" class="readmore d-block w-100" value="Send Message">
+                      <input type="submit" class="readmore d-block w-100" value="Send">
                     </div>
                   </div>
                 </form>
@@ -61,16 +61,13 @@
                         <form role="form">
 
                           <div class="row">
+                            {{ range $comment := .comments }}
                             <div class="col-md-12 form-group">
-                                <label for="name">Artem</label>
-                                <textarea class="form-control"  name="message" cols="30" rows="10" readonly>Text sample</textarea>
+                                <label for="name"> {{ $comment.Username }} </label>
+                                <textarea class="form-control" cols="30" rows="10" readonly> {{ $comment.Text }} </textarea>
                             </div>
                             <div class="col-md-12 my-3"></div>
-                            <div class="col-md-12 form-group">
-                                <label for="name">Artem 2</label>
-                                <textarea class="form-control" name="message" cols="30" rows="10" readonly>Text sample 2</textarea>
-                            </div>
-                            <div class="col-md-12 my-3"></div>
+                            {{ end }}
                           </div>
                         </form>
                       </div>

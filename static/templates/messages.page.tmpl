@@ -1,0 +1,54 @@
+{{ template "base" .}}
+{{define "main"}}
+<main id="main">
+
+          <div class="container">
+            <div class="row">
+              <div class="col-md-7 mb-6 mb-md-0" data-aos="fade-up">
+
+                <form  action="" method="post" role="form">
+
+                  <div class="row">
+                    <div class="col-md-12 form-group">
+                        <label for="name">Message</label>
+                        <textarea class="form-control" name="message" cols="30" rows="10" required></textarea>
+                    </div>
+                    <div class="col-md-12 my-2"></div>
+                    <div class="col-md-6 mt-0 form-group">
+                      <input type="submit" class="readmore d-block w-100" value="Send">
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+            <div class="col-md-12 my-5"></div>
+                  <div class="container">
+                    <div class="row">
+                      <div class="col-md-12 mb-10 mb-md-0" data-aos="fade-up">
+
+                        <form role="form">
+
+                          <div class="row">
+                            {{ range $message := .messages }}
+                            {{ if $message.IsFromMe }}
+                                <div class="col-md-7 form-group align-items-start">
+                                    <label for="name"> {{ $message.FromUsername }} </label>
+                                    <textarea class="form-control" cols="30" rows="10" readonly> {{ $message.Text }} </textarea>
+                                </div>
+                            {{ else }}
+                                <div class="col-md-7 form-group align-items-end">
+                                    <label for="name"> {{ $message.ToUsername }} </label>
+                                    <textarea class="form-control" cols="30" rows="10" readonly> {{ $message.Text }} </textarea>
+                                </div>
+                            {{ end }}
+                            <div class="col-md-12 my-3"></div>
+                            {{ end }}
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+</main><!-- End #main -->
+{{ end }}

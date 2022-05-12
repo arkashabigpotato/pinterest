@@ -9,26 +9,31 @@ type Service interface {
 	Create(user models.User) (int, error)
 	GetByEmail(email string) (*models.User, error)
 	GetByID(userID int) (*models.User, error)
+	Update(user models.User) error
 }
 
 type service struct {
-	usersRepo      users.Repository
+	usersRepo users.Repository
 }
 
-func NewService(usersRepo users.Repository) Service{
+func NewService(usersRepo users.Repository) Service {
 	return &service{
 		usersRepo: usersRepo,
 	}
 }
 
-func (s *service) Create(user models.User) (int, error){
+func (s *service) Create(user models.User) (int, error) {
 	return s.usersRepo.Create(user)
 }
 
-func (s *service) GetByEmail(email string) (*models.User, error){
+func (s *service) GetByEmail(email string) (*models.User, error) {
 	return s.usersRepo.GetByEmail(email)
 }
 
-func (s *service) GetByID(userID int) (*models.User, error){
+func (s *service) GetByID(userID int) (*models.User, error) {
 	return s.usersRepo.GetByID(userID)
+}
+
+func (s *service) Update(user models.User) error {
+	return s.usersRepo.Update(user)
 }

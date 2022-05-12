@@ -11,19 +11,21 @@ type Repository interface {
 	GetByID(pinID int) (*models.Pin, error)
 	GetAll(limit, offset int) ([]*models.Pin, error)
 	Delete(pinID int) error
+	Like(pinID int) error
+	Dislike(pinID int) error
 }
 
 type repository struct {
-	db		  *sql.DB
+	db *sql.DB
 }
 
-func NewPinRepository(db *sql.DB) Repository  {
+func NewPinRepository(db *sql.DB) Repository {
 	return &repository{
 		db: db,
 	}
 }
 
-func (pr *repository) Create(pin models.Pin) error{
+func (pr *repository) Create(pin models.Pin) error {
 	_, err := pr.db.Exec(`insert into pin(description, likes_count, dislikes_count, author_id, pin_link) values ($1, $2, $3, $4, $5)`,
 		pin.Description, pin.LikesCount, pin.DislikesCount, pin.AuthorID, pin.PinLink,
 	)
@@ -31,12 +33,12 @@ func (pr *repository) Create(pin models.Pin) error{
 	return err
 }
 
-func (pr *repository) GetByUserID(userID, limit, offset int) ([]*models.Pin, error){
+func (pr *repository) GetByUserID(userID, limit, offset int) ([]*models.Pin, error) {
 	var pins []*models.Pin
 
 	rows, err := pr.db.Query(`select id, description, likes_count, dislikes_count, author_id, pin_link 
 from pin where author_id = $1 limit $2 offset $3`, userID, limit, offset)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 
@@ -51,7 +53,7 @@ from pin where author_id = $1 limit $2 offset $3`, userID, limit, offset)
 	return pins, nil
 }
 
-func (pr *repository) GetByID(pinID int) (*models.Pin, error){
+func (pr *repository) GetByID(pinID int) (*models.Pin, error) {
 	pin := &models.Pin{}
 
 	err := pr.db.QueryRow(`select id, description, likes_count, dislikes_count, author_id, pin_link 
@@ -61,12 +63,12 @@ from pin where id = $1`, pinID).
 	return pin, err
 }
 
-func (pr *repository) GetAll(limit, offset int) ([]*models.Pin, error){
+func (pr *repository) GetAll(limit, offset int) ([]*models.Pin, error) {
 	var pins []*models.Pin
 
 	rows, err := pr.db.Query(`select id, description, likes_count, dislikes_count, author_id, pin_link 
 from pin limit $1 offset $2`, limit, offset)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 
@@ -81,9 +83,24 @@ from pin limit $1 offset $2`, limit, offset)
 	return pins, nil
 }
 
-func (pr *repository) Delete(pinID int) error{
+func (pr *repository) Delete(pinID int) error {
 	_, err := pr.db.Exec(`delete from pin where id = $1`, pinID)
-	if err != nil{
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (pr *repository) Like(pinID int) error {
+	_, err := pr.db.Exec(`update pin set likes_count = likes_count + 1 where id = $1`, pinID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (pr *repository) Dislike(pinID int) error {
+	_, err := pr.db.Exec(`update pin set dislikes_count = dislikes_count + 1 where id = $1`, pinID)
+	if err != nil {
 		return err
 	}
 	return nil

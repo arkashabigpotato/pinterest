@@ -5,23 +5,23 @@ import (
 	"database/sql"
 )
 
-type Repository interface{
+type Repository interface {
 	Append(savedPin models.SavedPin) error
 	GetByUserID(userID, limit, offset int) ([]*models.SavedPin, error)
 	Delete(pinID int) error
 }
 
 type repository struct {
-	db		  *sql.DB
+	db *sql.DB
 }
 
-func NewSavedPinRepository(db *sql.DB) Repository  {
+func NewSavedPinRepository(db *sql.DB) Repository {
 	return &repository{
 		db: db,
 	}
 }
 
-func (sr *repository) Append(savedPin models.SavedPin) error{
+func (sr *repository) Append(savedPin models.SavedPin) error {
 	_, err := sr.db.Exec(`insert into saved_pins(pin_id, user_id) values ($1, $2)`,
 		savedPin.PinID, savedPin.UserID,
 	)
@@ -49,9 +49,9 @@ where user_id = $1  limit $2 offset $3`, userID, limit, offset)
 	return savedPins, nil
 }
 
-func (sr *repository) Delete(pinID int) error{
+func (sr *repository) Delete(pinID int) error {
 	_, err := sr.db.Exec(`delete from saved_pins where pin_id = $1`, pinID)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 	return nil

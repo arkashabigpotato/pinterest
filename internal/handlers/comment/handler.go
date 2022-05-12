@@ -9,7 +9,7 @@ import (
 )
 
 type Handler struct {
-	commentService   comment.Service
+	commentService comment.Service
 }
 
 func New(router *mux.Router, commentService comment.Service) {
@@ -56,7 +56,6 @@ func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	com, err := h.commentService.GetByID(c.ID)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
@@ -78,7 +77,6 @@ func (h *Handler) GetByUserID(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Validation error", http.StatusBadRequest)
 		return
 	}
-
 
 	com, err := h.commentService.GetByUserID(c.AuthorID, 10, 0)
 	if err != nil {
@@ -102,7 +100,6 @@ func (h *Handler) GetByPinID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	com, err := h.commentService.GetByPinID(c.PinID, 100, 0)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
@@ -116,7 +113,7 @@ func (h *Handler) GetByPinID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) Delete(w http.ResponseWriter, r *http.Request)  {
+func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	a := models.Comment{}
 
 	err := json.NewDecoder(r.Body).Decode(&a)

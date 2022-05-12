@@ -9,7 +9,7 @@ import (
 )
 
 type Handler struct {
-	savedPinService   saved_pins.Service
+	savedPinService saved_pins.Service
 }
 
 func New(router *mux.Router, savedPinService saved_pins.Service) {
@@ -67,7 +67,7 @@ func (h *Handler) GetByUserID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) Delete(w http.ResponseWriter, r *http.Request)  {
+func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	a := models.SavedPin{}
 
 	err := json.NewDecoder(r.Body).Decode(&a)

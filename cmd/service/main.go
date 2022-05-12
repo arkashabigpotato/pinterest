@@ -40,14 +40,14 @@ func main() {
 	pin3.New(router, pinService)
 
 	messageRepo := message.NewMessageRepository(db)
-	messageService := message2.NewService(messageRepo)
+	messageService := message2.NewService(messageRepo, userService)
 	message3.New(router, messageService)
 
 	commentRepo := comment.NewCommentRepository(db)
-	commentService := comment2.NewService(commentRepo)
+	commentService := comment2.NewService(commentRepo, userService)
 	comment3.New(router, commentService)
 
-	web.New(router, pinService, userService, savedPinService)
+	web.New(router, pinService, userService, savedPinService, commentService, messageService)
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
 	// router.Use(middleware.LoggingMW)

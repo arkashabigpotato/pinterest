@@ -5,7 +5,6 @@ import (
 	"net/http"
 )
 
-
 func index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, ":)")
 }
@@ -22,8 +21,7 @@ func messages(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, ":0 semese")
 }
 
-
-func main()  {
+func main() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", index)
@@ -32,6 +30,5 @@ func main()  {
 	mux.HandleFunc("/messages", messages)
 
 	http.ListenAndServe(":8080", mux)
-
 
 }

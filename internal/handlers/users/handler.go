@@ -9,7 +9,7 @@ import (
 )
 
 type Handler struct {
-	usersService   users.Service
+	usersService users.Service
 }
 
 func New(router *mux.Router, usersService users.Service) {
@@ -76,7 +76,6 @@ func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Validation error", http.StatusBadRequest)
 		return
 	}
-
 
 	us, err := h.usersService.GetByID(u.ID)
 	if err != nil {

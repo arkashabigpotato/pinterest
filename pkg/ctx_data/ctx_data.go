@@ -7,6 +7,7 @@ type UserData struct {
 }
 
 type CtxKey int
+
 var key = CtxKey(1)
 
 func ToContext(ctx context.Context, data UserData) context.Context {
@@ -14,7 +15,7 @@ func ToContext(ctx context.Context, data UserData) context.Context {
 }
 
 func FromContext(ctx context.Context) UserData {
-	if ctx.Value(key) == nil{
+	if ctx.Value(key) == nil {
 		return UserData{UserID: 0}
 	}
 	return ctx.Value(key).(UserData)

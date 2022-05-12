@@ -1,0 +1,38 @@
+{{ template "base" .}}
+{{define "main"}}
+<main id="main">
+
+    <section class="section pb-5">
+      <div class="container">
+
+        <div class="row mb-5 align-items-end">
+          <div class="col-md-6" data-aos="fade-up">
+            <h2>Settings</h2>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-5 mb-md-0" data-aos="fade-up">
+            <form method="post" role="form" enctype="multipart/form-data">
+              <div class="row gy-3">
+                <div class="col-md-6 form-group">
+                  <label for="status">Status</label>
+                  <input type="text" class="form-control" name="status" id="status">
+                </div>
+                <div class="col-md-6 form-group">
+                  <label for="img">Profile Img</label>
+                  <input type="file" class="form-control" name="img" id="img" required>
+                </div>
+                <div class="col-md-12 my-3"></div>
+                <div class="col-md-6 mt-0 form-group">
+                  <input type="submit" class="readmore d-block w-100" value="Save">
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main><!-- End #main -->
+{{ end }}

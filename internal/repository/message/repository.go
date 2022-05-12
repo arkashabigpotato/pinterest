@@ -5,34 +5,34 @@ import (
 	"database/sql"
 )
 
-type Repository interface{
+type Repository interface {
 	Create(message models.Message) error
-	Get(userID, limit, offset int) ([]*models.Message, error)
+	Get(userID, chatID, limit, offset int) ([]*models.Message, error)
 	Delete(id int) error
 }
 
 type repository struct {
-	db 			*sql.DB
+	db *sql.DB
 }
 
-func NewMessageRepository(db *sql.DB) Repository  {
+func NewMessageRepository(db *sql.DB) Repository {
 	return &repository{
 		db: db,
 	}
 }
 
-func (mr *repository) Create(message models.Message) error{
+func (mr *repository) Create(message models.Message) error {
 	_, err := mr.db.Exec(`insert into message(from_id, to_id, text, date_time) values ($1, $2, $3, $4)`,
 		message.FromID, message.ToID, message.Text, message.DateTime,
 	)
 	return err
 }
 
-func (mr *repository) Get(userID, limit, offset int) ([]*models.Message, error) {
+func (mr *repository) Get(userID, chatID, limit, offset int) ([]*models.Message, error) {
 	var messages []*models.Message
 
 	rows, err := mr.db.Query(`select id, from_id, to_id, text, date_time from message 
-where from_id = $1 or to_id = $1 limit $2 offset $3`, userID, limit, offset)
+where (from_id = $1 and to_id = $2) or (from_id = $2 and to_id = $1) limit $3 offset $4`, userID, chatID, limit, offset)
 	if err != nil {
 		return nil, err
 	}

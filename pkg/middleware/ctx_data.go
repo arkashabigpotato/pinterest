@@ -26,7 +26,7 @@ func ContextDataMW(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r.Clone(ctx).WithContext(ctx))
 			return
 		}
-		if err != nil && err != http.ErrNoCookie{
+		if err != nil && err != http.ErrNoCookie {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

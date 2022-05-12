@@ -9,7 +9,7 @@ import (
 )
 
 type Handler struct {
-	MessageService   message.Service
+	MessageService message.Service
 }
 
 func New(router *mux.Router, MessageService message.Service) {
@@ -54,7 +54,7 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	mes, err := h.MessageService.Get(m.ID, 10, 0)
+	mes, err := h.MessageService.Get(m.ID, 1, 10, 0)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -67,7 +67,7 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) Delete(w http.ResponseWriter, r *http.Request)  {
+func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	a := models.Message{}
 
 	err := json.NewDecoder(r.Body).Decode(&a)
