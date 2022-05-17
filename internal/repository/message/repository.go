@@ -32,7 +32,7 @@ func (mr *repository) Get(userID, chatID, limit, offset int) ([]*models.Message,
 	var messages []*models.Message
 
 	rows, err := mr.db.Query(`select id, from_id, to_id, text, date_time from message 
-where (from_id = $1 and to_id = $2) or (from_id = $2 and to_id = $1) limit $3 offset $4`, userID, chatID, limit, offset)
+where (from_id = $1 and to_id = $2) or (from_id = $2 and to_id = $1) order by id desc limit $3 offset $4`, userID, chatID, limit, offset)
 	if err != nil {
 		return nil, err
 	}

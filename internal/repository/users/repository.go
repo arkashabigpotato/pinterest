@@ -8,6 +8,7 @@ import (
 type Repository interface {
 	Create(user models.User) (int, error)
 	GetByEmail(email string) (*models.User, error)
+	GetAll(limit, offset int) ([]*models.User, error)
 	GetByID(userID int) (*models.User, error)
 	Update(user models.User) error
 }
@@ -43,6 +44,26 @@ from users where email = $1`, email).
 		Scan(&user.ID, &user.Email, &user.Password, &user.IsAdmin, &user.BirthDate, &user.Username, &user.ProfileImg, &user.Status)
 
 	return user, err
+}
+
+func (ur *UserRepository) GetAll(limit, offset int) ([]*models.User, error) {
+	var users []*models.User
+
+	rows, err := ur.db.Query(`select id, email, password, is_admin, birth_date, username, profile_img, status 
+from users limit $1 offset $2`, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		user := &models.User{}
+		err := rows.Scan(&user.ID, &user.Email, &user.Password, &user.IsAdmin, &user.BirthDate, &user.Username, &user.ProfileImg, &user.Status)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+	return users, nil
 }
 
 func (ur *UserRepository) GetByID(userID int) (*models.User, error) {

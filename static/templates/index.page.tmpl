@@ -1,26 +1,6 @@
 {{template "base" .}}
 {{define "main"}}
   <main id="main">
-
-    <!-- ======= Works Section ======= -->
-    <section class="section site-portfolio">
-      <div class="container">
-        <div class="row mb-5 align-items-center">
-          {{ range $pin := .pins }}
-          <div class="item branding col-sm-6 col-md-4 col-lg-4 mb-4">
-            <a href="/pin/{{ $pin.ID }}" class="item-wrap fancybox">
-              <div class="work-info">
-                <h3>{{ $pin.Description }}</h3>
-              </div>
-              <img class="img-fluid" src="{{ $pin.PinLink }}">
-            </a>
-          </div>
-          {{ end }}
-        </div>
-      </div>
-    </section><!-- End  Works Section -->
-
-
     <!-- ======= Services Section ======= -->
     <section class="section services">
       <div class="container">
@@ -49,7 +29,7 @@
             <ul class="list-unstyled list-line">
               <li>Eyes</li>
               <li>Tattoo</li>
-              <li>Art</li>
+              <li>Art Ideas</li>
               <li>Phone Wallpaper</li>
               <li>Drawing</li>
             </ul>
@@ -79,6 +59,24 @@
         </div>
       </div>
     </section><!-- End Services Section -->
+
+    <!-- ======= Works Section ======= -->
+    <section class="section site-portfolio">
+      <div class="container">
+        <div class="row mb-5 align-items-center">
+          {{ range $pin := .pins }}
+          <div class="item branding col-sm-6 col-md-4 col-lg-4 mb-4">
+            <a href="/pin/{{ $pin.ID }}" class="item-wrap fancybox">
+              <div class="work-info">
+                <h3>{{ $pin.Description }}</h3>
+              </div>
+              <img class="img-fluid" src="{{ $pin.PinLink }}">
+            </a>
+          </div>
+          {{ end }}
+        </div>
+      </div>
+    </section><!-- End  Works Section -->
 
     <!-- ======= Testimonials Section ======= -->
     <section class="section pt-0">

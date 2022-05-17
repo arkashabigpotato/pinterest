@@ -48,6 +48,7 @@ func New(router *mux.Router, PinService pin.Service, UserService users.Service, 
 	router.HandleFunc("/dislike/{id}", handler.Dislike).Methods(http.MethodPost, http.MethodGet)
 	router.HandleFunc("/settings", handler.Settings).Methods(http.MethodPost, http.MethodGet)
 	router.HandleFunc("/messages/{id}", handler.Message).Methods(http.MethodPost, http.MethodGet)
+	router.HandleFunc("/select-profile", handler.SelectProfile)
 }
 
 func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
@@ -573,4 +574,37 @@ func (h *Handler) Message(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func (h *Handler) SelectProfile(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	userData := ctx_data.FromContext(ctx)
+
+	if userData.UserID == 0 {
+		http.Redirect(w, r, "/sign-in", http.StatusFound)
+		return
+	}
+
+	files := []string{
+		"./static/templates/select-profile.page.tmpl",
+		"./static/templates/base.layout.tmpl",
+	}
+
+	allUsers, err := h.UserService.GetAll(100, 0)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := map[string]interface{}{
+		"users":       allUsers,
+		"isLoggedIn": true,
+	}
+
+	err = template.ExecuteTemplate(r.Context(), w, files, data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 }

@@ -32,12 +32,12 @@
                           <div class="row">
                             {{ range $message := .messages }}
                             {{ if $message.IsFromMe }}
-                                <div class="col-md-7 form-group align-items-start">
+                                <div class="col-md-7 form-group offset-md-4">
                                     <label for="name"> {{ $message.FromUsername }} </label>
                                     <textarea class="form-control" cols="30" rows="10" readonly> {{ $message.Text }} </textarea>
                                 </div>
                             {{ else }}
-                                <div class="col-md-7 form-group align-items-end">
+                                <div class="col-md-7 form-group">
                                     <label for="name"> {{ $message.ToUsername }} </label>
                                     <textarea class="form-control" cols="30" rows="10" readonly> {{ $message.Text }} </textarea>
                                 </div>

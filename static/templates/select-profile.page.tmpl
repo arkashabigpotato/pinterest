@@ -1,0 +1,29 @@
+{{ template "base" .}}
+{{define "main"}}
+<main id="main">
+
+    <section class="section pb-5">
+        <div class="container">
+        <h2>Select Profile</h2>
+        <br>
+        <br>
+        {{ range $user := .users }}
+            <a href="/messages/{{ $user.ID }}">
+                <div class="row">
+                    <div class="col-md-4 ml-auto order-2" data-aos="fade-up">
+                        <strong class="d-block mb-1">{{ $user.Username }}</strong>
+                        <span>{{ $user.Email }}</span>
+                    </div>
+                    <div class="col-md-2 mb-5 mb-md-0" data-aos="fade-up">
+                        <p><img src="{{ $user.ProfileImg }}" alt="Image" class="img-fluid"></p>
+                    </div>
+                </div>
+            </a>
+            <br>
+            <br>
+        {{ end }}
+        </div>
+    </section>
+
+</main><!-- End #main -->
+{{ end }}
