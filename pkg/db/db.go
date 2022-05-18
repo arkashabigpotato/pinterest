@@ -5,11 +5,13 @@ import (
 	"fmt"
 	_ "github.com/jackc/pgx/stdlib" // pgx postgres database driver
 	"log"
+	"os"
 )
 
 // PostgresConnection create connect to postgres and check it
 func PostgresConnection() *sql.DB {
-	dsn := fmt.Sprintf("host=localhost port=5432 dbname=postgres user=annyka")
+	host := os.Getenv("DB_HOST")
+	dsn := fmt.Sprintf("host=%s port=5432 dbname=postgres user=annyka password=pass", host)
 
 	db, err := sql.Open("pgx", dsn)
 	if err != nil {

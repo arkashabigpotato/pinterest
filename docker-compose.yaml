@@ -1,0 +1,30 @@
+version: "2.3"
+
+volumes:
+  pg_data:
+
+services:
+  pg_db:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=annyka
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=postgres
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U annyka -d postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+  pin_storage:
+    image: arkashabigpotato/pin_storage
+    ports:
+      - 8888:8888
+    depends_on:
+      pg_db:
+        condition: service_healthy
+    environment:
+      - DB_HOST=pg_db
