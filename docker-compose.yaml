@@ -1,6 +1,7 @@
 version: "2.3"
 
 volumes:
+  img:
   pg_data:
 
 services:
@@ -19,8 +20,20 @@ services:
       interval: 3s
       timeout: 3s
       retries: 10
+  migrate:
+    image: migrate/migrate
+    depends_on:
+      pg_db:
+        condition: service_healthy
+    volumes:
+      - /Users/annyka/GolandProjects/Project1/migrations:/migrations
+    command: [ "-path", "/migrations", "-database",  "postgres://annyka:pass@pg_db/postgres?sslmode=disable", "up" ]
+    links:
+      - pg_db
   pin_storage:
     image: arkashabigpotato/pin_storage
+    volumes:
+      - /Users/annyka/GolandProjects/Project1/static/img:/static/img
     ports:
       - 8888:8888
     depends_on:
